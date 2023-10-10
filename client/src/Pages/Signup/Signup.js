@@ -10,7 +10,7 @@ export default function Example() {
 
   const signup = () => {
     console.log(email, password);
-    axios.post(process.env.REACT_APP_SERVER_IP + "user/signup", {
+    axios.post(process.env.REACT_APP_SERVER_IP + "signup", {
       "email": email,
       "name": name,
       "password": password

@@ -9,7 +9,7 @@ export default function Example() {
 
   const signin = () => {
     console.log(email, password);
-    axios.post(process.env.REACT_APP_SERVER_IP + "user/signin", {
+    axios.post(process.env.REACT_APP_SERVER_IP + "signin", {
       "email": email,
       "password": password
     }).then((response) => {
@@ -18,6 +18,9 @@ export default function Example() {
         return;
       }
       setAuthenticated(true);
+      localStorage.setItem("authenticated", true);
+      localStorage.setItem("name", result["name"]);
+      localStorage.setItem("email", result["email"]);
     }).catch((error) => {
       console.log(error);
     })
@@ -33,7 +36,7 @@ export default function Example() {
           <body class="h-full">
           ```
         */}
-      {authenticated && <Navigate to="/dashboard"></Navigate>}
+      {localStorage.getItem("authenticated") === "true" && <Navigate to="/dashboard"></Navigate>}
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img

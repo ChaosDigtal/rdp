@@ -43,7 +43,6 @@ con.connect(function(err) {
 });
 
 app.post("/fetch", function (req, res) {
-    console.log("fetch");
     con.query("select * from connections", function (err, result, fields) {
         if (err) {
             res.json({
@@ -58,6 +57,44 @@ app.post("/fetch", function (req, res) {
     });
 })
 
-app.use("/user", routes)
+app.post("/signin", function (req, res) {
+    // ---- ADFS SignIn Flow Start ----
+    // ---- ADFS SignIn Flow End ----
+    con.query(`select * from users where email='${req.body.email}'`, function (err, result, fields) {
+        if (err) {
+            res.json({
+                result: "failed"
+            });
+            throw err;
+        }
+        if (result.length == 0){
+            res.json({
+                result: "failed"
+            });
+            return;
+        }
+        res.json({
+            result: "success",
+            name: result[0].name,
+            email: result[0].email
+        })
+    });
+})
+
+app.post("/signup", function (req, res) {
+    // ---- ADFS SignUp Flow Start ----
+    // ---- ADFS SignUp Flow End ----
+    con.query(`insert into users (name, email) VALUES ('${req.body.name}', '${req.body.email}')`, function (err, result, fields) {
+        if (err) {
+            res.json({
+                result: "failed"
+            });
+            throw err;
+        }
+        res.json({
+            result: "success"
+        })
+    });
+})
 
 server.listen(port, () => console.log(`Server is running on Port ${port}`));

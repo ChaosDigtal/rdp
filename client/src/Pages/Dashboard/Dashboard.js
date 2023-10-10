@@ -2,17 +2,18 @@ import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { ArchiveBoxArrowDownIcon, Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import React, { useState, useEffect } from "react";
+import { Link, Navigate } from "react-router-dom";
 import axios from "axios";
 
 const user = {
-    name: 'Tom Cook',
-    email: 'tom@example.com',
+    name: localStorage.getItem("name"),
+    email: localStorage.getItem("email"),
     imageUrl:
         'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
 }
 
 const signout = () => {
-    console.log("signout");
+    localStorage.setItem("authenticated", false);
 }
 
 const navigation = [
@@ -33,8 +34,10 @@ export default function Example() {
     const [search, setSearch] = useState("");
     const [connections, setConnections] = useState([]);
     const [currentConnections, setCurrentConnections] = useState([]);
+    const [signOut, setSignOut] = useState(false);
 
     useEffect(() => {
+        console.log(localStorage.getItem("authenticated"));
         axios.post(process.env.REACT_APP_SERVER_IP + "fetch", {}).then((response) => {
             let result = response["data"];
             if (result["result"] != "success") {
@@ -43,6 +46,8 @@ export default function Example() {
             result = result["data"];
             setConnections(result);
             setCurrentConnections(result);
+            user.name = localStorage.getItem("name");
+            user.email = localStorage.getItem("email");
         }).catch((error) => {
             console.log(error);
         })
@@ -60,7 +65,7 @@ export default function Example() {
             document.body.appendChild(a);
             a.click();
 
-            var file = new Blob([`User Name: ${connection.username}\nConnection Type: ${connection.connectionType}\nConnection URL: ${connection.connectionUrl}\nConnection Status: ${connection.connectionStatus}\nConnection Image: ${connection.connectionImage}\nMessage: ${connection.message}`], {type: "test/plain"});
+            var file = new Blob([`User Name: ${connection.username}\nConnection Type: ${connection.connectionType}\nConnection URL: ${connection.connectionUrl}\nConnection Status: ${connection.connectionStatus}\nConnection Image: ${connection.connectionImage}\nMessage: ${connection.message}`], { type: "test/plain" });
             a.href = URL.createObjectURL(file);
             a.download = `${connection.username}.info`;
             a.click();
@@ -85,6 +90,7 @@ export default function Example() {
         <body class="h-full">
         ```
       */}
+            {localStorage.getItem("authenticated") !== "true" && <Navigate to="/signin"></Navigate>}
             <div className="min-h-full">
                 <Disclosure as="nav" className="bg-gray-800">
                     {({ open }) => (
